@@ -20,7 +20,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Socket.IO ASGI app
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
-app = FastAPI()
 socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 # CORS (if you're using frontend)
@@ -41,6 +40,10 @@ async def disconnect(sid):
 
 @sio.event
 async def join_room(sid, data):
+
+    print("join_room received:", data)
+
+
     room = data["room"]
     db: Session = SessionLocal()
 
@@ -81,6 +84,9 @@ async def join_room(sid, data):
 
 @sio.event
 async def send_message(sid, data):
+
+    print("send_message received:", data)
+
     room_slug = data["room"]
     user_uid = data["uid"]
     content = data["content"]
