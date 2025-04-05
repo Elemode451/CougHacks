@@ -190,7 +190,7 @@ async def get_users():
         for user in users
     ]
 
-@app.get("payload/{nickname}")
+@app.get("/payload/{nickname}")
 async def payload(nickname):
     return {generate()}
 
