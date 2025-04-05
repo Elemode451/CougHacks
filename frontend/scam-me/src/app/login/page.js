@@ -5,25 +5,17 @@ import { useRouter } from 'next/navigation'; // Import Next.js router to handle 
 
 export default function Page() {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const router = useRouter(); // Initialize the router for navigation
 
   // Sign In button functionality
   const handleSignIn = () => {
     // Placeholder for actual authentication logic
-    if (username && password) {
-      alert('Signed in successfully!'); // Replace with actual sign-in logic (API call, etc.)
-      // You can redirect the user to a different page, e.g., a dashboard after successful login
-      router.push('/chatroom'); // Example: Navigate to a dashboard page after sign-in
+    if (username) {
+      alert('Signed in successfully!'); 
+      router.push('/successfail'); 
     } else {
-      alert('Please enter both username and password');
+      alert('Please enter a username');
     }
-  };
-
-  // "No account?" button functionality
-  const handleNoAccount = () => {
-    // Navigate to the sign-up page
-    router.push('/createacc'); // Example: Redirect to the sign-up page
   };
 
   return (
@@ -52,29 +44,13 @@ export default function Page() {
             className="p-3 rounded border"
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="p-3 rounded border"
-          />
-
           <div className="flex gap-2">
             {/* Sign in button with onClick handler */}
             <button
               className="bg-black p-2 rounded hover:bg-gray-200"
               onClick={handleSignIn}
             >
-              Sign in
-            </button>
-
-            {/* No account button with onClick handler */}
-            <button
-              className="bg-black p-2 rounded hover:bg-gray-200"
-              onClick={handleNoAccount}
-            >
-              No account?
+              Submit
             </button>
           </div>
         </div>
