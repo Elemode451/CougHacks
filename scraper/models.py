@@ -1,5 +1,3 @@
-# models.py
-
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from database import Base
@@ -8,20 +6,23 @@ import datetime
 class User(Base):
     __tablename__ = 'users'
 
-    uid = Column(String, primary_key=True)
+    uid = Column(String, primary_key=True)  # e.g. first 12 chars of signature
     nickname = Column(String, nullable=False)
     registered_at = Column(DateTime, default=datetime.datetime.utcnow)
 
+    # relationship to Message
     messages = relationship('Message', back_populates='user')
+
 
 class Chatroom(Base):
     __tablename__ = 'chatrooms'
 
-    slug = Column(String, primary_key=True)
-    name = Column(String, nullable=False)
-    mode = Column(String, nullable=False)
+    slug = Column(String, primary_key=True)  # used as room name in socket.io
+    name = Column(String, nullable=False)    # display name
+    mode = Column(String, nullable=False)    # 'online/offline
 
     messages = relationship('Message', back_populates='chatroom')
+
 
 class Message(Base):
     __tablename__ = 'messages'
