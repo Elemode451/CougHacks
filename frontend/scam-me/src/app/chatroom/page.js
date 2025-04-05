@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getSocket } from '../socket';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Plus, MessageSquare, Send } from 'lucide-react';
 import clsx from 'clsx';
@@ -21,6 +22,12 @@ const Home = () => {
   const [newMessage, setNewMessage] = useState('');
 
   const handleSendMessage = () => {
+    const socket = getSocket();
+
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
+
     if (newMessage.trim() && activeChat) {
       const message = {
         id: Date.now(),
@@ -29,6 +36,13 @@ const Home = () => {
         timestamp: new Date().toISOString(),
         sender: 'You',
       };
+
+       // Emit message to server
+       socket.emit('chat message', {
+          newMessage,
+          sender: 'You' // NEED TO REPLACE WITH USERNAME STATE
+      });
+
       setMessages([...messages, message]);
       setNewMessage('');
     }
@@ -55,7 +69,7 @@ const Home = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-gradient-to-br from-cyan-100 to-blue-100">
       {/* Sidebar - now with all content */}
-      <motion.div 
+      <motion.div
         className="flex flex-col h-full bg-white/30 backdrop-blur-md"
         animate={{
           width: sidebarOpen ? 240 : 80,
@@ -69,7 +83,7 @@ const Home = () => {
       >
         <div className="p-4 flex justify-between items-center border-b border-white/30">
           {sidebarOpen && (
-            <motion.h2 
+            <motion.h2
               className="text-xl font-bold text-cyan-800"
               initial={{ opacity: 0 }}
               animate={{ opacity: sidebarOpen ? 1 : 0 }}
@@ -78,7 +92,7 @@ const Home = () => {
               Communities
             </motion.h2>
           )}
-          <button 
+          <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-full hover:bg-white/30 transition-colors text-cyan-700"
             style={{
@@ -89,17 +103,17 @@ const Home = () => {
             {sidebarOpen ? <ChevronLeft /> : <ChevronRight />}
           </button>
         </div>
-        
+
         <div className="p-2 flex-1 overflow-y-auto">
           {chats.map(chat => (
-            <motion.div 
+            <motion.div
               key={chat.id}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActiveChat(chat.id)}
               className={clsx(
                 "p-3 rounded-xl cursor-pointer mb-2 flex items-center gap-2 transition-all",
-                activeChat === chat.id 
+                activeChat === chat.id
                   ? 'bg-gradient-to-r from-cyan-400/30 to-blue-400/30 border border-white/30 shadow-lg'
                   : 'hover:bg-white/30 border border-transparent hover:border-white/30'
               )}
@@ -157,7 +171,7 @@ const Home = () => {
         {activeChat ? (
           <>
             {/* Chat header */}
-            <div 
+            <div
               className="p-4 rounded-xl bg-white/30 backdrop-blur-md mb-4 flex-shrink-0"
               style={{
                 border: '1px solid rgba(255, 255, 255, 0.5)',
@@ -168,9 +182,9 @@ const Home = () => {
                 {chats.find(c => c.id === activeChat)?.name || 'Chat'}
               </h2>
             </div>
-            
+
             {/* Messages container - scrollable area */}
-            <div 
+            <div
               className="flex-1 overflow-y-auto p-4 rounded-xl bg-white/30 backdrop-blur-md mb-4"
               style={{
                 border: '1px solid rgba(255, 255, 255, 0.5)',
@@ -181,8 +195,8 @@ const Home = () => {
                 {messages
                   .filter(m => m.chatId === activeChat)
                   .map(message => (
-                    <motion.div 
-                      key={message.id} 
+                    <motion.div
+                      key={message.id}
                       className={clsx(
                         "mb-4",
                         message.sender === 'You' ? 'self-end' : 'self-start'
@@ -190,10 +204,10 @@ const Home = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                     >
-                      <div 
+                      <div
                         className={clsx(
                           "p-3 rounded-xl inline-block max-w-xs shadow-md",
-                          message.sender === 'You' 
+                          message.sender === 'You'
                             ? 'bg-gradient-to-r from-cyan-400 to-blue-400 text-white'
                             : message.sender === 'System'
                             ? 'bg-purple-400/30 text-cyan-800'
@@ -205,11 +219,11 @@ const Home = () => {
                       >
                         {message.text}
                       </div>
-                      <div 
+                      <div
                         className={clsx(
                           "text-xs mt-1",
-                          message.sender === 'You' 
-                            ? 'text-right text-cyan-700' 
+                          message.sender === 'You'
+                            ? 'text-right text-cyan-700'
                             : 'text-left text-cyan-700/80'
                         )}
                       >
@@ -219,7 +233,7 @@ const Home = () => {
                   ))}
               </div>
             </div>
-            
+
             {/* Input area */}
             <div className="flex gap-2 flex-shrink-0">
               <input
@@ -245,7 +259,7 @@ const Home = () => {
             </div>
           </>
         ) : (
-          <motion.div 
+          <motion.div
             className="flex-1 flex items-center justify-center rounded-xl bg-white/30 backdrop-blur-md"
             style={{
               border: '1px solid rgba(255, 255, 255, 0.5)',
