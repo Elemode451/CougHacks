@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 import uvicorn
 from database import Base, engine, SessionLocal
 from models import User, Chatroom, Message
-from datetime import datetime
+from datetime import datetime, timezone
 import hmac, hashlib, os
 
 SECRET = "Skibidi Toilet"
@@ -108,7 +108,7 @@ async def send_message(sid, data):
         await sio.emit("error", {"message": f"User '{user_uid}' does not exist"}, to=sid)
         return
 
-    timestamp = datetime.now(datetime.timezone.utc)
+    timestamp = datetime.now(timezone.utc)
     message = Message(
         room_slug=room_slug,
         user_uid=user_uid,
@@ -137,13 +137,19 @@ class CreateChatroomPayload(BaseModel):
     name: str
     mode: str
 
-def generate_signature(nickname: str, signature: str, secret: str) -> str:
-    message = f"{nickname}:{signature}".encode()
+def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
+    message = f"{nickname}:{timestamp}".encode()
     return hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
 
 @app.get("/")
 async def root():
     file_path = os.path.join(os.path.dirname(__file__), "temp.html")
+    print(file_path)
+    return FileResponse(path=file_path, media_type='text/html')
+
+@app.get("/u2")
+async def root():
+    file_path = os.path.join(os.path.dirname(__file__), "temp2.html")
     print(file_path)
     return FileResponse(path=file_path, media_type='text/html')
 
@@ -185,9 +191,9 @@ async def get_users():
 
 @app.post("/register")
 async def register_user(payload: CardPayload):
-    expected_signature = generate_signature(payload.nickname, payload.signature, SECRET)
+    expected_signature = generate_signature(payload.nickname, payload.timestamp, SECRET)
     print(expected_signature)
-    print(payload.signature)
+    print(payload.timestamp)
     if not hmac.compare_digest(expected_signature, payload.signature):
         raise HTTPException(
             status_code=403,
