@@ -7,12 +7,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
     <style>
         :root {
-            --primary-dark: #0a1929;
-            --primary-light: #5ac8fa;
-            --accent: #00ccff;
-            --glass: rgba(85, 190, 255, 0.15);
-            --glass-border: rgba(111, 211, 255, 0.4);
-            --highlight: rgba(190, 232, 255, 0.8);
+            --primary-dark: #1a1a2e;
+            --primary-light: #ffffff;
+            --accent: #343a40;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --highlight: rgba(255, 255, 255, 0.9);
+            --text-dark: #121212;
+            --text-light: #fafafa;
+            --shadow: rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -23,8 +26,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, #112233, #001122);
-            color: white;
+            background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+            color: var(--text-dark);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -40,27 +43,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="%2300ccff" stroke-width="0.5" stroke-opacity="0.1"/><line x1="0" y1="0" x2="100" y2="100" stroke="%2300ccff" stroke-width="0.5" stroke-opacity="0.1"/><line x1="100" y1="0" x2="0" y2="100" stroke="%2300ccff" stroke-width="0.5" stroke-opacity="0.1"/></svg>');
-            opacity: 0.1;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="%23343a40" stroke-width="0.5" stroke-opacity="0.05"/><line x1="0" y1="0" x2="100" y2="100" stroke="%23343a40" stroke-width="0.5" stroke-opacity="0.05"/><line x1="100" y1="0" x2="0" y2="100" stroke="%23343a40" stroke-width="0.5" stroke-opacity="0.05"/></svg>');
+            opacity: 0.05;
             z-index: -1;
         }
 
         .chat-container {
             width: 900px;
             height: 600px;
-            background: var(--primary-dark);
+            background: var(--primary-light);
             border-radius: 16px;
             overflow: hidden;
-            border: 1px solid var(--primary-light);
-            box-shadow: 0 0 30px rgba(0, 204, 255, 0.15),
-                        inset 0 0 30px rgba(0, 204, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px var(--shadow),
+                        0 0 1px rgba(0, 0, 0, 0.1);
             display: grid;
             grid-template-rows: auto 1fr auto;
+            backdrop-filter: blur(10px);
         }
 
         .chat-header {
             padding: 16px 24px;
-            background: linear-gradient(180deg, rgba(90, 200, 250, 0.5), rgba(0, 122, 255, 0.3));
+            background: linear-gradient(180deg, #ffffff, #f5f5f7);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -83,7 +87,7 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            background: linear-gradient(90deg, #ffffff, #5ac8fa);
+            background: linear-gradient(90deg, var(--primary-dark), #000000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             z-index: 1;
@@ -93,7 +97,7 @@
         }
 
         .neo-icon {
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            background: linear-gradient(135deg, var(--primary-dark), #000000);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 20px;
@@ -109,6 +113,8 @@
             padding: 6px 12px;
             border-radius: 20px;
             border: 1px solid var(--glass-border);
+            color: var(--text-dark);
+            box-shadow: 0 2px 8px var(--shadow);
         }
 
         .status-indicator {
@@ -116,7 +122,7 @@
             height: 10px;
             background: #4CD964;
             border-radius: 50%;
-            box-shadow: 0 0 10px #4CD964;
+            box-shadow: 0 0 5px rgba(76, 217, 100, 0.5);
         }
 
         .chat-messages {
@@ -124,17 +130,18 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            background: rgba(10, 25, 41, 0.7);
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .message {
             max-width: 80%;
-            padding: 10px 16px;
+            padding: 12px 18px;
             border-radius: 16px;
-            line-height: 1.4;
+            line-height: 1.5;
             position: relative;
             animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 3px 10px var(--shadow);
         }
 
         @keyframes fadeIn {
@@ -147,15 +154,15 @@
             background: var(--glass);
             border: 1px solid var(--glass-border);
             border-top-left-radius: 4px;
-            color: white;
+            color: var(--text-dark);
         }
 
         .outgoing {
             align-self: flex-end;
-            background: linear-gradient(135deg, rgba(0, 204, 255, 0.5), rgba(0, 122, 255, 0.5));
-            color: white;
+            background: linear-gradient(135deg, var(--primary-dark), #000000);
+            color: var(--text-light);
             border-top-right-radius: 4px;
-            border: 1px solid rgba(111, 211, 255, 0.6);
+            border: none;
         }
 
         .message::before {
@@ -165,7 +172,7 @@
             left: 0;
             right: 0;
             height: 50%;
-            background: linear-gradient(to bottom, var(--highlight), transparent);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
             border-radius: inherit;
             opacity: 0.5;
             pointer-events: none;
@@ -188,7 +195,7 @@
 
         .message-input-container {
             padding: 16px;
-            background: rgba(10, 25, 41, 0.9);
+            background: rgba(255, 255, 255, 0.8);
             display: flex;
             border-top: 1px solid var(--glass-border);
         }
@@ -199,22 +206,23 @@
             background: var(--glass);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            color: white;
+            color: var(--text-dark);
             font-size: 16px;
             outline: none;
             transition: all 0.3s;
+            box-shadow: 0 1px 5px var(--shadow);
         }
 
         .message-input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(0, 204, 255, 0.3);
+            box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.1);
         }
 
         .send-button {
             width: 46px;
             height: 46px;
             margin-left: 10px;
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            background: linear-gradient(135deg, var(--primary-dark), #000000);
             border: none;
             border-radius: 23px;
             display: flex;
@@ -222,7 +230,7 @@
             align-items: center;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0, 204, 255, 0.3);
+            box-shadow: 0 3px 10px var(--shadow);
             position: relative;
             overflow: hidden;
         }
@@ -234,13 +242,13 @@
             left: 0;
             right: 0;
             height: 50%;
-            background: linear-gradient(to bottom, var(--highlight), transparent);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
             border-radius: 23px 23px 0 0;
         }
 
         .send-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 204, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .send-button:active {
@@ -253,7 +261,7 @@
             width: 100%;
             text-align: center;
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(0, 0, 0, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -263,25 +271,25 @@
         .encryption-footer svg {
             height: 14px;
             width: 14px;
-            fill: rgba(255, 255, 255, 0.4);
+            fill: rgba(0, 0, 0, 0.4);
         }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.05);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(90, 200, 250, 0.3);
-            border-radius: 4px;
+            background: rgba(26, 26, 46, 0.2);
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(90, 200, 250, 0.5);
+            background: rgba(26, 26, 46, 0.3);
         }
 
         .grid-overlay {
@@ -291,14 +299,14 @@
             width: 100%;
             height: 100%;
             background-image:
-                linear-gradient(rgba(90, 200, 250, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(90, 200, 250, 0.03) 1px, transparent 1px);
+                linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
             background-size: 20px 20px;
             pointer-events: none;
             z-index: -1;
         }
 
-        /* Tech-inspired animated background elements */
+        /* Tech-inspired animated background elements - subtle version */
         .tech-pattern {
             position: fixed;
             top: 0;
@@ -311,33 +319,33 @@
 
         .circuit {
             position: absolute;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
             height: 1px;
             opacity: 0.2;
-            animation: circuit-move 8s linear infinite;
+            animation: circuit-move 12s linear infinite;
         }
 
         .data-packet {
             position: absolute;
             width: 4px;
             height: 4px;
-            background: var(--accent);
+            background: var(--primary-dark);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent);
-            animation: data-move 3s linear infinite;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            animation: data-move 6s linear infinite;
         }
 
         @keyframes circuit-move {
             0% { width: 0; opacity: 0; }
-            10% { opacity: 0.2; }
-            90% { opacity: 0.2; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
             100% { width: 100%; opacity: 0; }
         }
 
         @keyframes data-move {
             0% { transform: translateX(-10px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
             100% { transform: translateX(calc(100vw + 10px)); opacity: 0; }
         }
 
@@ -350,8 +358,9 @@
             border: 1px solid var(--glass-border);
             border-radius: 16px;
             margin-bottom: 10px;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--text-dark);
             font-size: 12px;
+            box-shadow: 0 2px 8px var(--shadow);
         }
 
         .typing-dots {
@@ -362,7 +371,7 @@
         .typing-dot {
             width: 4px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.7);
+            background: var(--text-dark);
             border-radius: 50%;
             margin: 0 2px;
             animation: dot-pulse 1.5s infinite;
@@ -381,9 +390,13 @@
             30% { transform: scale(1.5); opacity: 1; }
         }
 
-        /* Hover glow effects */
-        .message:hover, .send-button:hover, .online-status:hover {
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        /* Hover effects */
+        .message:hover {
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .send-button:hover, .online-status:hover {
+            box-shadow: 0 5px 15px var(--shadow);
         }
 
         /* Mobile responsiveness */

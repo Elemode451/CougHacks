@@ -1,6 +1,5 @@
 # main.py
 
-from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -31,6 +30,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @sio.event
 async def connect(sid, environ):
@@ -72,8 +72,7 @@ async def join_room(sid, data):
 
     # reverse to show oldest → newest
     messages.reverse()
-    
-    print(f'Messages: ${messages}')
+
     # send message history to just the joining client
     await sio.emit("chat_history", [
         {
@@ -109,7 +108,7 @@ async def send_message(sid, data):
         await sio.emit("error", {"message": f"User '{user_uid}' does not exist"}, to=sid)
         return
 
-    timestamp = datetime.utcnow()  
+    timestamp = datetime.now(datetime.timezone.utc)
     message = Message(
         room_slug=room_slug,
         user_uid=user_uid,
@@ -117,14 +116,6 @@ async def send_message(sid, data):
         timestamp=timestamp
     )
     db.add(message)
-    
-    print("Message stored:", {
-    "room_slug": room_slug,
-    "user_uid": user_uid,
-    "content": content,
-    "timestamp": timestamp
-    })
-    
     db.commit()
 
     await sio.emit("chat_message", {
@@ -146,15 +137,14 @@ class CreateChatroomPayload(BaseModel):
     name: str
     mode: str
 
-def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
-    message = f"{nickname}:{timestamp}".encode()
+def generate_signature(nickname: str, signature: str, secret: str) -> str:
+    message = f"{nickname}:{signature}".encode()
     return hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
 
 @app.get("/")
 async def root():
-    file_path = Path(__file__).resolve().parent / "temp.html"
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="temp.html not found")
+    file_path = os.path.join(os.path.dirname(__file__), "temp.html")
+    print(file_path)
     return FileResponse(path=file_path, media_type='text/html')
 
 @app.get("/chatrooms")
@@ -165,18 +155,6 @@ async def get_chatrooms():
         {"slug": room.slug, "name": room.name, "mode": room.mode}
         for room in chatrooms
     ]
-
-@app.get("/{slug}/messages/")
-async def get_chatrooms(slug):
-    db = SessionLocal()
-    messages = (
-        db.query(Message)
-        .filter_by(room_slug=slug)
-        .order_by(Message.timestamp.desc())
-        .limit(30)
-        .all()
-    )
-    return {"messages" : messages}
 
 
 @app.post("/chatrooms")
@@ -207,7 +185,7 @@ async def get_users():
 
 @app.post("/register")
 async def register_user(payload: CardPayload):
-    expected_signature = generate_signature(payload.nickname, payload.timestamp, SECRET)
+    expected_signature = generate_signature(payload.nickname, payload.signature, SECRET)
     print(expected_signature)
     print(payload.signature)
     if not hmac.compare_digest(expected_signature, payload.signature):
