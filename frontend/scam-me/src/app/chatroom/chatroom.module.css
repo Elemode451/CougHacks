@@ -1,0 +1,26 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #333;
+    color: white;
+    transition: left 0.3s ease-in-out;
+    padding: 20px;
+}
+
+.open {
+    left: 0;
+}
+
+.toggleBtn {
+    position: fixed; 
+    top: 20px;
+    left: 20px;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
