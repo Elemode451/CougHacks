@@ -23,7 +23,7 @@ export default function Page() {
   // "No account?" button functionality
   const handleNoAccount = () => {
     // Navigate to the sign-up page
-    router.push('/signup'); // Example: Redirect to the sign-up page
+    router.push('/createacc'); // Example: Redirect to the sign-up page
   };
 
   return (

@@ -1,64 +1,63 @@
 'use client'
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showClearUsername, setShowClearUsername] = useState(false);
   const [showClearPassword, setShowClearPassword] = useState(false);
-  
-  // Handle showing/hiding clear buttons
+
+  const router = useRouter();
+
   useEffect(() => {
     setShowClearUsername(username.length > 0);
   }, [username]);
-  
+
   useEffect(() => {
     setShowClearPassword(password.length > 0);
   }, [password]);
-  
-  // Clear input handlers
+
   const clearUsername = () => {
     setUsername('');
     document.getElementById('username').focus();
   };
-  
+
   const clearPassword = () => {
     setPassword('');
     document.getElementById('password').focus();
   };
-  
-  // Form submission handler
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!username.trim() || !password.trim()) {
       alert('Please enter both username and password');
       return;
     }
-    
-    // Here you would normally handle authentication
+
     console.log('Login attempt:', { username, password });
+    // Here you would add login functionality
   };
-  
-  // Create account handler
+
   const handleCreateAccount = () => {
-    alert('Create account functionality would go here');
+    router.push('/chatroom'); 
   };
-  
+
   return (
     <div
       className="min-h-screen flex items-center justify-center"
-      style={{ 
+      style={{
         backgroundImage: "url('../images/createbackground.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
     >
-      <div className="w-full max-w-md p-6">
+      <div className="w-full max-w-md p-6 bg-black/60 rounded-xl">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="relative">
-            <label htmlFor="username" className="block text-sm font-medium text-black mb-1">
+            <label htmlFor="username" className="block text-sm font-medium text-white mb-1">
               Username
             </label>
             <div className="relative">
@@ -68,7 +67,7 @@ export default function LoginPage() {
                 placeholder="..."
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-3 rounded border-2 border-black text-black" // Added text-black here
+                className="w-full p-3 rounded border-2 border-white text-black"
                 autoComplete="off"
               />
               {showClearUsername && (
@@ -82,9 +81,9 @@ export default function LoginPage() {
               )}
             </div>
           </div>
-          
+
           <div className="relative">
-            <label htmlFor="password" className="block text-sm font-medium text-black mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-white mb-1">
               Password
             </label>
             <div className="relative">
@@ -94,7 +93,7 @@ export default function LoginPage() {
                 placeholder="..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 rounded border-2 border-black text-black" // Added text-black here
+                className="w-full p-3 rounded border-2 border-white text-black"
                 autoComplete="off"
               />
               {showClearPassword && (
@@ -108,12 +107,19 @@ export default function LoginPage() {
               )}
             </div>
           </div>
-          
+
+          <button
+            type="submit"
+            className="bg-white text-black p-3 rounded hover:bg-gray-300 transition"
+          >
+            Sign In
+          </button>
+
           <div className="text-center mt-2">
             <button
               type="button"
               onClick={handleCreateAccount}
-              className="text-black hover:underline cursor-pointer"
+              className="text-white hover:underline cursor-pointer"
             >
               Create account
             </button>
