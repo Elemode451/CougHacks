@@ -11,3 +11,7 @@ async def root():
 async def function():
     return {"FastAPI": "FASTAPIIII"}
 
+
+@app.get("/chatrooms/{slug}/messages"):
+async def getMessages():
+    return {"Skibidi Toilet": "dop dop"}
