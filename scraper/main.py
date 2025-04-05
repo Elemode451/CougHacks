@@ -1,5 +1,6 @@
 # main.py
 
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -139,8 +140,9 @@ def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
 
 @app.get("/")
 async def root():
-    file_path = os.path.join(os.path.dirname(__file__), "temp.html")
-    print(file_path)
+    file_path = Path(__file__).resolve().parent / "temp.html"
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="temp.html not found")
     return FileResponse(path=file_path, media_type='text/html')
 
 @app.get("/chatrooms")
