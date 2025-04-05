@@ -465,41 +465,42 @@
 
         socket.on("connect", () => {
           console.log("Connected to server, ID:", socket.id);
+          joinRoom("messages", "banana")
         });
 
         // Join a chat room
         function joinRoom(roomSlug, userUid) {
-        currentRoom = roomSlug;
-        currentUser = userUid;
+            currentRoom = roomSlug;
+            currentUser = userUid;
 
-        socket.emit("join_room", {
-            room: roomSlug
-        });
+            socket.emit("join_room", {
+                room: roomSlug
+            });
 
-        console.log(`Attempting to join room: ${roomSlug}`);
+            console.log(`Attempting to join room: ${roomSlug}`);
         }
 
         // Send a message to the current room
-        function sendMessage(content) {
-        if (!currentRoom || !currentUser) {
-            console.error("Not in a room or user not set");
-            return;
-        }
+        // function sendMessage(content) {
+        //     if (!currentRoom || !currentUser) {
+        //         console.error("Not in a room or user not set");
+        //         return;
+        //     }
 
-        socket.emit("send_message", {
-            room: currentRoom,
-            uid: currentUser,
-            content: content
-        });
-        }
+        //     socket.emit("send_message", {
+        //         room: currentRoom,
+        //         uid: currentUser,
+        //         content: content
+        //     });
+        // }
 
         // Listen for chat history when joining a room
         socket.on("chat_history", (messages) => {
-        console.log("Received chat history:", messages);
-        // Update UI with history
-        messages.forEach(msg => {
-            displayMessage(msg);
-        });
+            console.log("Received chat history:", messages);
+            // Update UI with history
+            messages.forEach(msg => {
+                displayMessage(msg);
+            });
         });
 
         // Listen for new messages
@@ -600,11 +601,14 @@
                 // Scroll to bottom
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
+                console.log("trying pls")
                 // Emit message to server
-                socket.emit('chat message', {
-                    message,
-                    sender: username
+                socket.emit("send_message", {
+                    room: currentRoom,
+                    uid: currentUser,
+                    content: content
                 });
+                console.log("emitted")
 
                 // Stop typing indicator
                 socket.emit('stop typing');
