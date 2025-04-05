@@ -165,7 +165,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                         print(f"New message in {channel['name']} from {user['username']}")
 
             elif message_type == "create_channel":
-                # Process create channel
                 channel_name = message.get("data")
 
                 if channel_name:
