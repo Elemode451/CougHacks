@@ -192,7 +192,7 @@ async def get_users():
 
 @app.get("/payload/{nickname}")
 async def payload(nickname):
-    return {generate()}
+    return {generate(nickname, SECRET)}
 
 
 @app.post("/register")
