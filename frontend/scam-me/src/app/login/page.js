@@ -5,11 +5,9 @@ import { useRouter } from 'next/navigation'; // Import Next.js router to handle 
 
 export default function Page() {
   const [username, setUsername] = useState('');
-  const router = useRouter(); // Initialize the router for navigation
+  const router = useRouter(); 
 
-  // Sign In button functionality
   const handleSignIn = () => {
-    // Placeholder for actual authentication logic
     if (username) {
       alert('Signed in successfully!'); 
       router.push('/successfail'); 
