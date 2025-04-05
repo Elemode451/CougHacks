@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import uvicorn
 from database import Base, engine, SessionLocal
-from models import User
+from models import User, Chatroom, Message
 from datetime import datetime
 import hmac, hashlib, os
 
@@ -14,13 +14,16 @@ app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-#pydantic
 class CardPayload(BaseModel):
     nickname: str
     timestamp: str
     signature: str
 
-# Function to generate a signature using HMAC-SHA256
+class CreateChatroomPayload(BaseModel):
+    slug: str
+    name: str
+    mode: str 
+
 def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
     message = f"{nickname}:{timestamp}".encode()
     return hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
@@ -29,11 +32,37 @@ def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
 async def root():
     return {"message": "pranav"}
 
+
+@app.get("/chatrooms")
+async def get_chatrooms():
+    db: Session = SessionLocal()
+    chatrooms = db.query(Chatroom).all()
+    return [
+        {"slug": room.slug, "name": room.name, "mode": room.mode}
+        for room in chatrooms
+    ]
+
+
+@app.post("/chatrooms")
+async def create_chatroom(payload: CreateChatroomPayload):
+    db: Session = SessionLocal()
+    existing = db.query(Chatroom).filter_by(slug=payload.slug).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Chatroom already exists")
+
+    new_room = Chatroom(slug=payload.slug, name=payload.name, mode=payload.mode)
+    db.add(new_room)
+    db.commit()
+    return {"message": "Chatroom created", "slug": new_room.slug}
+
+
+
+
 @app.get("/dev/users")
 async def get_users(): 
     db: Session = SessionLocal()
     users = db.query(User).all()
-    # Convert SQLAlchemy User objects to dictionaries
+
     return [
         {
             "uid": user.uid,
