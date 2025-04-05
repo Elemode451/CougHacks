@@ -7,7 +7,7 @@ from datetime import datetime
 import argparse
 import os
 
-SECRET = "Skibidi Toilet"
+SECRET = "5c2e0e5f5b31f523db2670462038c87930bd5397af439bbc4ecae2b8e95fddf5"
 
 def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
     message = f"{nickname}:{timestamp}".encode()

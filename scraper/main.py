@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 import hmac, hashlib, os
 from create_card_id import generate
 
-SECRET = "Skibidi Toilet"
+SECRET = "5c2e0e5f5b31f523db2670462038c87930bd5397af439bbc4ecae2b8e95fddf5"
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
