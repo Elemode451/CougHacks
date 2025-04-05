@@ -1,6 +1,8 @@
 # main.py
 
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import uvicorn
@@ -106,7 +108,7 @@ async def send_message(sid, data):
         await sio.emit("error", {"message": f"User '{user_uid}' does not exist"}, to=sid)
         return
 
-    timestamp = datetime.utcnow()
+    timestamp = datetime.now(datetime.timezone.utc)
     message = Message(
         room_slug=room_slug,
         user_uid=user_uid,
@@ -133,7 +135,7 @@ class CardPayload(BaseModel):
 class CreateChatroomPayload(BaseModel):
     slug: str
     name: str
-    mode: str 
+    mode: str
 
 def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
     message = f"{nickname}:{timestamp}".encode()
@@ -141,7 +143,10 @@ def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
 
 @app.get("/")
 async def root():
-    return {"message": "pranav"}
+    file_path = Path(__file__).resolve().parent / "temp.html"
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="temp.html not found")
+    return FileResponse(path=file_path, media_type='text/html')
 
 @app.get("/chatrooms")
 async def get_chatrooms():
@@ -166,7 +171,7 @@ async def create_chatroom(payload: CreateChatroomPayload):
     return {"message": "Chatroom created", "slug": new_room.slug}
 
 @app.get("/dev/users")
-async def get_users(): 
+async def get_users():
     db: Session = SessionLocal()
     users = db.query(User).all()
 
@@ -186,23 +191,23 @@ async def register_user(payload: CardPayload):
     print(payload.signature)
     if not hmac.compare_digest(expected_signature, payload.signature):
         raise HTTPException(
-            status_code=403, 
+            status_code=403,
             detail=f"Invalid signature. Expected: {expected_signature}, received: {payload.signature}"
         )
-    
+
     uid = payload.signature[:12]
-    
+
     # Create a new database session and try to fetch the user
     db: Session = SessionLocal()
     user = db.query(User).filter_by(uid=uid).first()
     if user:
         return {"uid": user.uid, "nickname": user.nickname, "message": "Already registered"}
-    
+
     # If the user doesn't exist, create a new one
     new_user = User(uid=uid, nickname=payload.nickname, registered_at=datetime.utcnow())
     db.add(new_user)
     db.commit()
-    
+
     return {"uid": uid, "nickname": payload.nickname, "message": "Registered successfully"}
 
 
