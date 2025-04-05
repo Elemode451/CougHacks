@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Chat</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Chat Test</h1>
+  <input id="msgInput" placeholder="Type message..." />
+  <button id="sendBtn">Send</button>
+
+  <ul id="chatlog"></ul>
+
+  <script>
+    const uid = "bf5ae5139ca3";
+    const room = "general";
+    const socket = io("http://localhost:8000");
+
+    socket.on("connect", () => {
+      console.log("Connected as", socket.id);
+      socket.emit("join_room", { room });
+    });
+
+    socket.on("chat_message", (msg) => {
+      displayMessage(msg);
+    });
+
+    socket.on("chat_history", (messages) => {
+      messages.forEach(displayMessage);
+    });
+
+    socket.on("error", (err) => {
+      console.error("Server error:", err.message || err);
+    });
+
+    function displayMessage(msg) {
+      const item = document.createElement("li");
+      item.textContent = `[${msg.timestamp}] ${msg.sender}: ${msg.content}`;
+      document.getElementById("chatlog").appendChild(item);
+    }
+
+    function sendMsg() {
+      const input = document.getElementById("msgInput");
+      const content = input.value.trim();
+      if (!content) return;
+
+      socket.emit("send_message", {
+        uid,
+        room,
+        content
+      });
+
+      input.value = "";
+    }
+
+    // connect button to function
+    document.getElementById("sendBtn").addEventListener("click", sendMsg);
+
+    // allow Enter key to send
+    document.getElementById("msgInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMsg();
+    });
+  </script>
+</body>
+</html>
