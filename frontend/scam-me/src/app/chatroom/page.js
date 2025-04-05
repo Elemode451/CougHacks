@@ -10,13 +10,13 @@ const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeChat, setActiveChat] = useState(1); // Default to first chat
   const [chats, setChats] = useState([
-    { id: 1, name: 'General Chat' },
-    { id: 2, name: 'Support' },
-    { id: 3, name: 'Random' },
+    { id: 1, name: 'Community 1' },
+    { id: 2, name: 'Community 2' },
+    { id: 3, name: 'Community 3' },
   ]);
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hey there! 👋", chatId: 1, timestamp: new Date().toISOString(), sender: "System" },
-    { id: 2, text: "Welcome to AeroChat!", chatId: 1, timestamp: new Date().toISOString(), sender: "System" },
+    { id: 1, text: "Hey there!", chatId: 1, timestamp: new Date().toISOString(), sender: "System" },
+    { id: 2, text: "Welcome to the chat!", chatId: 1, timestamp: new Date().toISOString(), sender: "System" },
   ]);
   const [newMessage, setNewMessage] = useState('');
 
@@ -177,7 +177,7 @@ const Home = () => {
                 boxShadow: '0 0 15px rgba(0, 150, 255, 0.2)',
               }}
             >
-              <div className="flex flex-col-reverse">
+              <div className="flex flex-col">
                 {messages
                   .filter(m => m.chatId === activeChat)
                   .map(message => (
@@ -256,7 +256,7 @@ const Home = () => {
           >
             <div className="text-cyan-700/80 text-center p-6">
               <div className="text-4xl mb-4">💬</div>
-              <h3 className="text-xl font-medium mb-2">Welcome to AeroChat</h3>
+              <h3 className="text-xl font-medium mb-2">Welcome to the chat</h3>
               <p>Select a chat from the sidebar or create a new one</p>
             </div>
           </motion.div>

@@ -1,12 +1,21 @@
-import Layout from '../components/layout.js';
+'use client'
 
-const ExplorePage = () => {
+import { useState } from 'react';
+
+const Explore = () => {
+  const switchMode = (mode) => {
+    if (mode === communities) {
+      // switch map and list info to communities
+    } else if (mode === events) {
+      // switch map and list info to events
+    }
+  };
+
   return (
-    <Layout>
-      <h1>Explore</h1>
-      <p>daniel is hated</p>
-    </Layout>
-  );
-};
+    <div>
 
-export default ExplorePage;
+    </div>
+  );
+}
+
+export default Explore;
