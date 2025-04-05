@@ -9,6 +9,7 @@ from database import Base, engine, SessionLocal
 from models import User, Chatroom, Message
 from datetime import datetime, timezone
 import hmac, hashlib, os
+from create_card_id import generate
 
 SECRET = "Skibidi Toilet"
 app = FastAPI()
@@ -188,6 +189,11 @@ async def get_users():
         }
         for user in users
     ]
+
+@app.get("payload/{nickname}")
+async def payload(nickname):
+    return {generate()}
+
 
 @app.post("/register")
 async def register_user(payload: CardPayload):

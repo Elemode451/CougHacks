@@ -13,7 +13,7 @@ def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
     message = f"{nickname}:{timestamp}".encode()
     return hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
 
-def main():
+def generate():
     parser = argparse.ArgumentParser(description="Generate a card payload for registration.")
     parser.add_argument("nickname", help="User nickname to store on the card")
     parser.add_argument("--timestamp", help="ISO 8601 timestamp; defaults to current UTC time", default=None)
@@ -35,5 +35,7 @@ def main():
 
     print(json.dumps(payload, indent=2))
 
+    return payload
+
 if __name__ == "__main__":
-    main()
+    generate()
