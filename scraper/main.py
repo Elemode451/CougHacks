@@ -72,7 +72,8 @@ async def join_room(sid, data):
 
     # reverse to show oldest → newest
     messages.reverse()
-
+    
+    print(f'Messages: ${messages}')
     # send message history to just the joining client
     await sio.emit("chat_history", [
         {
@@ -108,7 +109,7 @@ async def send_message(sid, data):
         await sio.emit("error", {"message": f"User '{user_uid}' does not exist"}, to=sid)
         return
 
-    timestamp = datetime.now(datetime.timezone.utc)
+    timestamp = datetime.utcnow()  
     message = Message(
         room_slug=room_slug,
         user_uid=user_uid,
@@ -116,6 +117,14 @@ async def send_message(sid, data):
         timestamp=timestamp
     )
     db.add(message)
+    
+    print("Message stored:", {
+    "room_slug": room_slug,
+    "user_uid": user_uid,
+    "content": content,
+    "timestamp": timestamp
+    })
+    
     db.commit()
 
     await sio.emit("chat_message", {
@@ -156,6 +165,18 @@ async def get_chatrooms():
         {"slug": room.slug, "name": room.name, "mode": room.mode}
         for room in chatrooms
     ]
+
+@app.get("/{slug}/messages/")
+async def get_chatrooms(slug):
+    db = SessionLocal()
+    messages = (
+        db.query(Message)
+        .filter_by(room_slug=slug)
+        .order_by(Message.timestamp.desc())
+        .limit(30)
+        .all()
+    )
+    return {"messages" : messages}
 
 
 @app.post("/chatrooms")

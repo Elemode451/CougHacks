@@ -24,8 +24,7 @@ def main():
     if args.timestamp:
         timestamp = args.timestamp
     else:
-        timestamp = datetime.now(datetime.timezone.utc).isoformat() + "Z"
-    
+         timestamp = datetime.utcnow().isoformat() + "Z"    
     signature = generate_signature(nickname, timestamp, SECRET)
 
     payload = {

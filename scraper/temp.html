@@ -465,7 +465,7 @@
 
         socket.on("connect", () => {
           console.log("Connected to server, ID:", socket.id);
-          joinRoom("messages", "banana")
+          joinRoom("general", "bf5ae5139ca3")
         });
 
         // Join a chat room
@@ -590,6 +590,7 @@
         // Send message
         function sendMessage() {
             const message = messageInput.value.trim();
+            
             if (message) {
                 // Add message to UI
                 const messageElement = createMessageElement(message, username, true);
@@ -603,10 +604,11 @@
 
                 console.log("trying pls")
                 // Emit message to server
+                console.log(message)
                 socket.emit("send_message", {
                     room: currentRoom,
                     uid: currentUser,
-                    content: content
+                    content: message
                 });
                 console.log("emitted")
 
@@ -706,6 +708,34 @@
             // Focus input
             messageInput.focus();
         });
+
+        function displayMessage({ sender, content, timestamp, uid }) {
+                const isOutgoing = uid === currentUser;
+
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.classList.add(isOutgoing ? 'outgoing' : 'incoming');
+
+                const messageInfo = document.createElement('div');
+                messageInfo.classList.add('message-info');
+                messageInfo.textContent = sender;
+
+                const messageContent = document.createElement('div');
+                messageContent.classList.add('message-content');
+                messageContent.textContent = content;
+
+                const messageTime = document.createElement('div');
+                messageTime.classList.add('message-time');
+                messageTime.textContent = formatTime(timestamp ? new Date(timestamp) : new Date());
+
+                messageElement.appendChild(messageInfo);
+                messageElement.appendChild(messageContent);
+                messageElement.appendChild(messageTime);
+
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
     </script>
 </body>
 </html>

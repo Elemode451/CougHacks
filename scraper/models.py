@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from database import Base
 import datetime
@@ -31,7 +32,7 @@ class Message(Base):
     room_slug = Column(String, ForeignKey('chatrooms.slug'), nullable=False)
     user_uid = Column(String, ForeignKey('users.uid'), nullable=False)
     content = Column(Text, nullable=False)
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow) 
 
     chatroom = relationship('Chatroom', back_populates='messages')
     user = relationship('User', back_populates='messages')
