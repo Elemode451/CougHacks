@@ -68,14 +68,14 @@ export default function LoginPage() {
                 placeholder="..."
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-3 rounded border-2 border-black"
+                className="w-full p-3 rounded border-2 border-black text-black" // Added text-black here
                 autoComplete="off"
               />
               {showClearUsername && (
                 <button
                   type="button"
                   onClick={clearUsername}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-black-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-black"
                 >
                   ✕
                 </button>
@@ -94,14 +94,14 @@ export default function LoginPage() {
                 placeholder="..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 rounded border-2 border-black"
+                className="w-full p-3 rounded border-2 border-black text-black" // Added text-black here
                 autoComplete="off"
               />
               {showClearPassword && (
                 <button
                   type="button"
                   onClick={clearPassword}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-black"
                 >
                   ✕
                 </button>
