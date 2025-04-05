@@ -104,7 +104,7 @@ async def send_message(sid, data):
         await sio.emit("error", {"message": f"User '{user_uid}' does not exist"}, to=sid)
         return
 
-    timestamp = datetime.utcnow()
+    timestamp = datetime.now(datetime.timezone.utc)
     message = Message(
         room_slug=room_slug,
         user_uid=user_uid,
