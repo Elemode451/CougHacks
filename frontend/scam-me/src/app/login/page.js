@@ -16,6 +16,11 @@ export default function Page() {
     }
   };
 
+  const nfcLogin = () => {
+    // Navigate to the NFC QR code
+    router.push('/nfclogin'); // Example: Redirect to the QR code
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -25,9 +30,9 @@ export default function Page() {
         
         {/* Left Info Box */}
         <div className="bg-white/80 p-8 rounded-xl max-w-md">
-          <h1 className="text-3xl font-semibold mb-4 text-center text-black">Information</h1>
+          <h1 className="text-3xl font-semibold mb-4 text-center text-black">RADIUS</h1>
           <p className="text-gray-700">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.
+            Connect locally and keep your info secure.
             {/* Your detailed information content */}
           </p>
         </div>
@@ -39,16 +44,24 @@ export default function Page() {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="p-3 rounded border"
+            className="p-3 rounded border text-gray-200"
           />
 
           <div className="flex gap-2">
             {/* Sign in button with onClick handler */}
             <button
-              className="bg-black p-2 rounded hover:bg-gray-200"
+              className="bg-gray-500 p-2 rounded hover:bg-gray-200"
               onClick={handleSignIn}
             >
               Submit
+            </button>
+
+            {/* No account button with onClick handler */}
+            <button
+              className="bg-gray-500 p-2 rounded hover:bg-gray-200"
+              onClick={nfcLogin}
+            >
+              Log in with NFC
             </button>
           </div>
         </div>
