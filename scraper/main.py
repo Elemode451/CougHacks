@@ -32,6 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @sio.event
 async def connect(sid, environ):
     print(f"Client connected: {sid}")
@@ -146,8 +147,8 @@ class CreateChatroomPayload(BaseModel):
     name: str
     mode: str
 
-def generate_signature(nickname: str, timestamp: str, secret: str) -> str:
-    message = f"{nickname}:{timestamp}".encode()
+def generate_signature(nickname: str, signature: str, secret: str) -> str:
+    message = f"{nickname}:{signature}".encode()
     return hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
 
 @app.get("/")
@@ -207,7 +208,7 @@ async def get_users():
 
 @app.post("/register")
 async def register_user(payload: CardPayload):
-    expected_signature = generate_signature(payload.nickname, payload.timestamp, SECRET)
+    expected_signature = generate_signature(payload.nickname, payload.signature, SECRET)
     print(expected_signature)
     print(payload.signature)
     if not hmac.compare_digest(expected_signature, payload.signature):
