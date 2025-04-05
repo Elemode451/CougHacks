@@ -42,7 +42,10 @@ async def disconnect(sid):
 async def join_room(sid, data):
 
     print("join_room received:", data)
+    db = SessionLocal()
 
+    chatrooms = db.query(Chatroom).all()
+    print("All rooms in DB:", [c.slug for c in chatrooms])
 
     room = data["room"]
     db: Session = SessionLocal()
